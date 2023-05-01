@@ -98,4 +98,4 @@ Roughly speaking, all of the classification based models will be used in the pro
 
 The hyperparameters chosen to tune will be finalized later, but the basic ones will definitely be utilized (ex. trees, min_n, and mtry with rand_forest).
 
-To evaluate the final model, aoc_auc will be used as the comparison metric.
+To evaluate the final model, roc_auc will be used as the comparison metric.
