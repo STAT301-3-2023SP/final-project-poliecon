@@ -1,0 +1,101 @@
+---
+title: "Second Memo"
+author: "Parth Patel & Qin Huang"
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+    
+execute:
+  warning: false
+  echo: false
+
+from: markdown+emoji 
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+To link to your github **repo**sitory, appropriately edit the example link below. Meaning replace `https://your-github-repo-url` with your github repo url. Suggest verifying the link works before submitting.
+
+[https://github.com/STAT301-3-2023SP/final-project-poliecon](https://github.com/STAT301-3-2023SP/final-project-poliecon)
+
+:::
+
+## Overview
+
+### Prediction Problem
+
+In this project, we use a survey dataset of American youths to predict whether a specific interviewee voted or not in the 2012 presidential election based on their demographics, experiences with civic education, family and friend influences, and their political values. Therefore, it is a classification problem instead of regression problem.
+
+### Observations and NA values
+
+There are 4483 observations split between 396 variables in this dataset. I selected 60 variables that are believed to affect voting behaviours. Among these selected variables, most of them are binary variables with original answers of Yes or No. Many of them are ordinal, for example, with different levels of frequency. The rest are categorical. There are a lot of NA values that will have to be accounted for (The ones for QI1 have already been adjusted).
+
+### Target Variable
+
+The target is Q1. It asks the question "Did you vote in the national election held recently?" with two answers -- 1: Yes, 2: No.
+
+### Formation of Dataset & Questions
+
+When reducing the number of predictor variables, we mainly rely on our existing knowledge of voting and political participation in general. We are not quite sure whether reducing it from 396 to 60 is too ambitious. Do we need a bit more variables? Does a bigger number of variables make the model become too computationally expensive?
+
+## Data & Modeling
+
+The link for the data can be found [here](https://www.icpsr.umich.edu/web/civicleads/studies/35012).
+
+### General Data
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(gt)
+
+load("data/raw/35012-0001-Data.rda")
+
+data <- da35012.0001
+
+## predictors
+
+data1 <- data %>% 
+  select(QI1, QIII1, QIII5, QIII8, QIII11, QIII20, QV1, QV2,
+QVI1, QVI2, QVI3, QVI4, QVI6, QVI17, QVI18, QVI19, QVI20, QVI22,
+QVI23, QVI24, QVI25, QVI28, QVI29, QVI_30, QVI_31, QVI_32,
+QVII1, QVII2, QVII3, QVII4, QVII5, QVII6, QVII7, QVII8, QVII9,
+QIX, QIX2, QIX3, QIX4, QIX5, QIX6, QIX7, QIX8, QIX9,
+QX2, QX7,QX8,QX9,QX10,QX11,QX12,QX13,QX14,QX16,QX17,
+QX18, QX20, QX21, QX22, QX23
+) %>% 
+  mutate(QI1 = as_factor(QI1)) %>% 
+  filter(!is.na(QI1))
+
+gt(skimr::skim_without_charts(data1))
+```
+
+
+### Outcome Variable
+
+```{r}
+data1 %>% ggplot(aes(x = QI1)) + 
+  geom_bar()
+```
+
+There is a slight difference in distribution with Yes having ~900 more values than No. This should not really pose an issue with stratification used in splits and folds.
+
+### Splits & Folds
+
+The splits & folds have been created and the code can be found in the memo_1_code R script.
+
+### Modeling Plan
+
+Multiple recipes will be used with one being composed of all of the reduced variables and a second with select predictors. It has not yet been decided whether they will be selected by personal knowledge of the topic or by a correlation matrix (possibly a combination of the two).
+
+Roughly speaking, all of the classification based models will be used in the process. To list them out, we will use elastic net, nearest neighbors, random forest, boosted tree, svm poly, svm radial, single layer neural network mlp, and mars.
+
+The hyperparameters chosen to tune will be finalized later, but the basic ones will definitely be utilized (ex. trees, min_n, and mtry with rand_forest).
+
+To evaluate the final model, roc_auc will be used as the comparison metric.
