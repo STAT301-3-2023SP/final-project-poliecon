@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(ranger)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -13,7 +14,7 @@ tidymodels_prefer()
 set.seed(30123)
 
 # load required objects ----
-load("data/.rda")
+load("data/splits.rda")
 
 ### ADD RECIPE HERE
 
@@ -29,31 +30,38 @@ rf_model <- rand_forest(
   set_engine("ranger")
 
 # set-up tuning grid ----
-rf_param <- extract_parameter_set_dials(rf_model) %>% 
-  update(mtry = mtry(c(1, #Change to Variable Amount)))
+rf_params <- hardhat::extract_parameter_set_dials(rf_model) %>% 
+  update(
+    min_n = min_n(range = c(10,50)),
+    mtry = mtry(range = c(1,10))
+  )
 
 # define tuning grid ----
-rf_grid <- grid_regular(rf_param, levels = 5)
+rf_grid <- grid_regular(rf_params, levels = 5)
 
 # workflow ----
 rf_workflow <- workflow() %>% 
   add_model(rf_model) %>% 
-  add_recipe(bag_impute_rec)
+  add_recipe(recipe4)
 
-# Tuning/fitting ----
-doParallel::registerDoParallel(cores = 8)
+
+# Create a cluster object and then register: 
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
 
 tic.clearlog()
 tic("Random Forest")
 
 rf_tuned <- tune_grid(rf_workflow,
-                          resamples = titanic_folds,
+                          resamples = q_folds,
                           grid = rf_grid,
                           control = control_grid(save_pred = TRUE,
                                                  save_workflow = TRUE,
                                                  parallel_over = "everything")
 )
 
+
+view(rf_tuned)
 
 # Pace tuning code in hear
 toc(log = TRUE)
