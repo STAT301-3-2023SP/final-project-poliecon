@@ -50,8 +50,6 @@ t1 <- miss_var_summary(data2)
 
 view(t1)
 
-
-
 ## splits & folds
 
 q_split <- initial_split(data2, prop = 0.8, strata = QI1)
@@ -60,49 +58,4 @@ q_test <- testing(q_split)
 
 q_folds <- vfold_cv(q_training, v = 5, repeats = 3, strata = QI1)
 
-
-## Qin Huang May 19, new codes
-
-## missing views
-
-t1 <- miss_var_summary(q_training)
-
-view(t1)
-
-
-
-## recipe 3: basic with imputation after removing all over 20%
-
-recipe3 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_knn(all_predictors()) %>%
-  step_string2factor(all_nominal()) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
-  
-recipe3 %>%
-  prep(q_training) %>% 
-  bake(new_data = NULL)
-
-
-
-## recipe 4: advanced with imputation
-recipe4 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_knn(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
-
-recipe4 %>%
-  prep(q_training) %>% 
-  bake(new_data = NULL)
-
-# We have two recipes at hand. The basic one has four steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. This basic recipe also removes variables with over 20% missing values and uses knn for imputation through 'step_rm' and 'step_impute_knn'.
-
-# The second recipe goes beyond the basic by adding two more steps: 'step_other' is used to collapse infrequent factor levels into a single "other" level; 'step_nzv'is used to identify and remove predictors that have near-zero variance.
-
-
-save(q_training, q_test, q_folds, file = "data/splits")
+save(q_training, q_test, q_folds, file = "data/splits.rda")

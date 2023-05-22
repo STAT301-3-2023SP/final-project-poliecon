@@ -16,9 +16,14 @@ set.seed(30123)
 # load required objects ----
 load("data/splits.rda")
 
-### ADD RECIPE HERE
-
-# knn_impute_rec %>% prep() %>% bake(new_data = NULL)
+recipe4 = recipe(QI1 ~ ., data = q_training) %>%
+  step_impute_knn(all_predictors())  %>%
+  step_string2factor(all_nominal()) %>%
+  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_nzv(all_predictors()) %>%
+  step_center(all_predictors(), -all_nominal()) %>%
+  step_scale(all_predictors(), -all_nominal())
 
 # Define model ----
 rf_model <- rand_forest(
@@ -60,8 +65,6 @@ rf_tuned <- tune_grid(rf_workflow,
                                                  parallel_over = "everything")
 )
 
-
-view(rf_tuned)
 
 # Pace tuning code in hear
 toc(log = TRUE)

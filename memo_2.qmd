@@ -20,8 +20,6 @@ from: markdown+emoji
 
 ## Github Repo Link
 
-To link to your github **repo**sitory, appropriately edit the example link below. Meaning replace `https://your-github-repo-url` with your github repo url. Suggest verifying the link works before submitting.
-
 [https://github.com/STAT301-3-2023SP/final-project-poliecon](https://github.com/STAT301-3-2023SP/final-project-poliecon)
 
 :::
@@ -30,72 +28,73 @@ To link to your github **repo**sitory, appropriately edit the example link below
 
 ### Prediction Problem
 
-In this project, we use a survey dataset of American youths to predict whether a specific interviewee voted or not in the 2012 presidential election based on their demographics, experiences with civic education, family and friend influences, and their political values. Therefore, it is a classification problem instead of regression problem.
+In this project, we use a survey dataset of American youths to predict whether a specific interviewee voted or not in the 2012 presidential election based on their demographics, experiences with civic education, family and friend influences, and their political values. Therefore, it is a classification problem.
 
-### Observations and NA values
+### Modeling Plan
 
-There are 4483 observations split between 396 variables in this dataset. I selected 60 variables that are believed to affect voting behaviours. Among these selected variables, most of them are binary variables with original answers of Yes or No. Many of them are ordinal, for example, with different levels of frequency. The rest are categorical. There are a lot of NA values that will have to be accounted for (The ones for QI1 have already been adjusted).
+In this memo, we developed a well-working recipe. The comprehensive recipe has six steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. This basic recipe also removes variables with over 20% missing values and uses knn for imputation through 'step_rm' and 'step_impute_knn'. It also involves two more steps: 'step_other' is used to collapse infrequent factor levels into a single "other" level; 'step_nzv' is used to identify and remove predictors that have near-zero variance. 
 
-### Target Variable
+In our final analysis, we might try to develop a second recipe by using step_impute_bass to replace knn imputation and see whether this new imputation method works better than the original one. 
 
-The target is Q1. It asks the question "Did you vote in the national election held recently?" with two answers -- 1: Yes, 2: No.
+To evaluate the final model, roc_auc will be used as the main comparison metric.
 
-### Formation of Dataset & Questions
+All codes for this memo can be found within memo_2_code.R and the respective modeling R scripts.
 
-When reducing the number of predictor variables, we mainly rely on our existing knowledge of voting and political participation in general. We are not quite sure whether reducing it from 396 to 60 is too ambitious. Do we need a bit more variables? Does a bigger number of variables make the model become too computationally expensive?
+### Current Model Results & Runtimes
 
-## Data & Modeling
+For this memo, the one recipe was used with a random forest model and a null model. The random forest model mtry, min_n, and trees hyperparameters were tuned.
 
-The link for the data can be found [here](https://www.icpsr.umich.edu/web/civicleads/studies/35012).
-
-### General Data
+The results can be found below.
 
 ```{r}
+#| warning: false
+
 library(tidyverse)
 library(tidymodels)
 library(gt)
 
-load("data/raw/35012-0001-Data.rda")
+load("results/rf.rda")
+load("results/null.rda")
 
-data <- da35012.0001
+rf_time <- rf_tictoc %>% 
+  filter(model == "Random Forest")
 
-## predictors
+null_time <- null_tictoc %>% 
+  filter(model == "Null Model")
 
-data1 <- data %>% 
-  select(QI1, QIII1, QIII5, QIII8, QIII11, QIII20, QV1, QV2,
-QVI1, QVI2, QVI3, QVI4, QVI6, QVI17, QVI18, QVI19, QVI20, QVI22,
-QVI23, QVI24, QVI25, QVI28, QVI29, QVI_30, QVI_31, QVI_32,
-QVII1, QVII2, QVII3, QVII4, QVII5, QVII6, QVII7, QVII8, QVII9,
-QIX, QIX2, QIX3, QIX4, QIX5, QIX6, QIX7, QIX8, QIX9,
-QX2, QX7,QX8,QX9,QX10,QX11,QX12,QX13,QX14,QX16,QX17,
-QX18, QX20, QX21, QX22, QX23
-) %>% 
-  mutate(QI1 = as_factor(QI1)) %>% 
-  filter(!is.na(QI1))
+time_tib <- purrr::reduce(list(rf_time, null_time), dplyr::full_join) %>% 
+  gt() %>% 
+  tab_header(title = md("**Model Runtime**"))
 
-gt(skimr::skim_without_charts(data1))
+time_tib
+
+model_set <- 
+  as_workflow_set(
+    "rf" = rf_tuned,
+    "null" = null_tuned
+  )
+
+best_models <- as_tibble(
+  rank_results(model_set, rank_metric = "roc_auc", select_best = TRUE) %>% 
+  filter(.metric == "roc_auc") %>% 
+  select(wflow_id, mean, rank)
+)
+
+ranked_mods <- gt(best_models) %>% 
+  cols_label(wflow_id = html("Model Type"),
+             mean = html("Mean"),
+             rank = html("Rank")
+  ) %>% 
+  tab_header(
+    title = md("**Top Ranked Models**"),
+    subtitle = "Metric = ROC-AUC"
+  )
+
+ranked_mods
 ```
 
+### Relevant Challenges
 
-### Outcome Variable
+The random forest model took half an hour to fit and thus we imagine that it might take longer time to fit an XGBoost model. We will see whether fitting an XGBoost model is manageable. 
 
-```{r}
-data1 %>% ggplot(aes(x = QI1)) + 
-  geom_bar()
-```
-
-There is a slight difference in distribution with Yes having ~900 more values than No. This should not really pose an issue with stratification used in splits and folds.
-
-### Splits & Folds
-
-The splits & folds have been created and the code can be found in the memo_1_code R script.
-
-### Modeling Plan
-
-Multiple recipes will be used with one being composed of all of the reduced variables and a second with select predictors. It has not yet been decided whether they will be selected by personal knowledge of the topic or by a correlation matrix (possibly a combination of the two).
-
-Roughly speaking, all of the classification based models will be used in the process. To list them out, we will use elastic net, nearest neighbors, random forest, boosted tree, svm poly, svm radial, single layer neural network mlp, and mars.
-
-The hyperparameters chosen to tune will be finalized later, but the basic ones will definitely be utilized (ex. trees, min_n, and mtry with rand_forest).
-
-To evaluate the final model, roc_auc will be used as the comparison metric.
+Meanwhile, if it is super quick to fit other models that are less computationally expensive, such as regression and knn, we would consider incorporating a few more variables into our models, hoping to build a better-performed model. 
