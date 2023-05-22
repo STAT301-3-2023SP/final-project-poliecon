@@ -32,7 +32,9 @@ In this project, we use a survey dataset of American youths to predict whether a
 
 ### Modeling Plan
 
-In this memo, we developed a well-working recipe. The comprehensive recipe has six steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. This basic recipe also removes variables with over 20% missing values and uses knn for imputation through 'step_rm' and 'step_impute_knn'. It also involves two more steps: 'step_other' is used to collapse infrequent factor levels into a single "other" level; 'step_nzv' is used to identify and remove predictors that have near-zero variance. 
+In this memo, we developed a well-working recipe. The comprehensive recipe has six steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. 
+
+This basic recipe also removes variables with over 20% missing values and uses knn for imputation through 'step_rm' and 'step_impute_knn'. It also involves two more steps: 'step_other' is used to collapse infrequent factor levels into a single "other" level; 'step_nzv' is used to identify and remove predictors that have near-zero variance. 
 
 In our final analysis, we might try to develop a second recipe by using step_impute_bass to replace knn imputation and see whether this new imputation method works better than the original one. 
 
