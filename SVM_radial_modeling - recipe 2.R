@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(kernlab)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -28,7 +29,7 @@ svm_radial_model <- svm_rbf(
 svm_radial_param <- extract_parameter_set_dials(svm_radial_model)
 
 # define tuning grid ----
-svm_radial_grid <- grid_regular(svm_radial_param, levels = 5)
+svm_radial_grid <- grid_regular(svm_radial_param, levels = 10)
 
 # workflow ----
 svm_radial_workflow <- workflow() %>% 
@@ -36,7 +37,7 @@ svm_radial_workflow <- workflow() %>%
   add_recipe(recipe5)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

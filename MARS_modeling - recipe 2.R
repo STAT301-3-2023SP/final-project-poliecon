@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(earth)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -29,7 +30,7 @@ mars_param <- extract_parameter_set_dials(mars_model) %>%
   update(num_terms = num_terms(c(1, 22)))
 
 # define tuning grid ----
-mars_grid <- grid_regular(mars_param, levels = 5)
+mars_grid <- grid_regular(mars_param, levels = 10)
 
 # workflow ----
 mars_workflow <- workflow() %>% 
@@ -37,7 +38,7 @@ mars_workflow <- workflow() %>%
   add_recipe(recipe5)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

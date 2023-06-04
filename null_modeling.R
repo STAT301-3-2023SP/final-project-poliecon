@@ -26,7 +26,7 @@ null_workflow <- workflow() %>%
   add_recipe(recipe4)
 
 # Create a cluster object and then register: 
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

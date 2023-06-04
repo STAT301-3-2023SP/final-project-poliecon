@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(glmnet)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -28,7 +29,7 @@ en_model <- logistic_reg(
 en_param <- extract_parameter_set_dials(en_model)
 
 # define tuning grid ----
-en_grid <- grid_regular(en_param, levels = 5)
+en_grid <- grid_regular(en_param, levels = 10)
 
 # workflow ----
 en_workflow <- workflow() %>% 
@@ -36,7 +37,7 @@ en_workflow <- workflow() %>%
   add_recipe(recipe4)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

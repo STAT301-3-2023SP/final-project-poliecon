@@ -31,7 +31,7 @@ rf_params <- hardhat::extract_parameter_set_dials(rf_model) %>%
   update(mtry = mtry(range = c(1,22)))
 
 # define tuning grid ----
-rf_grid <- grid_regular(rf_params, levels = 5)
+rf_grid <- grid_regular(rf_params, levels = 10)
 
 # workflow ----
 rf_workflow <- workflow() %>% 
@@ -40,7 +40,7 @@ rf_workflow <- workflow() %>%
 
 
 # Create a cluster object and then register: 
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

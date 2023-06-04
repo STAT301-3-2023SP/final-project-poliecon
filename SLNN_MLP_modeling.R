@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(nnet)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -28,7 +29,7 @@ nn_model <- mlp(
 nn_param <- extract_parameter_set_dials(nn_model)
 
 # define tuning grid ----
-nn_grid <- grid_regular(nn_param, levels = 5)
+nn_grid <- grid_regular(nn_param, levels = 10)
 
 # workflow ----
 nn_workflow <- workflow() %>% 
@@ -36,7 +37,7 @@ nn_workflow <- workflow() %>%
   add_recipe(recipe4)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

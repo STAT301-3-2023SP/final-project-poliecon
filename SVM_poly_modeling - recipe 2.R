@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(kernlab)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -29,7 +30,7 @@ svm_poly_model <- svm_poly(
 svm_poly_param <- extract_parameter_set_dials(svm_poly_model)
 
 # define tuning grid ----
-svm_poly_grid <- grid_regular(svm_poly_param, levels = 5)
+svm_poly_grid <- grid_regular(svm_poly_param, levels = 10)
 
 # workflow ----
 svm_poly_workflow <- workflow() %>% 
@@ -37,7 +38,7 @@ svm_poly_workflow <- workflow() %>%
   add_recipe(recipe5)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

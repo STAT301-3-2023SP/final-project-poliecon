@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(xgboost)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -30,7 +31,7 @@ bt_param <- extract_parameter_set_dials(bt_model) %>%
   update(mtry = mtry(c(1, 22)))
 
 # define tuning grid ----
-bt_grid <- grid_regular(bt_param, levels = 5)
+bt_grid <- grid_regular(bt_param, levels = 10)
 
 # workflow ----
 bt_workflow <- workflow() %>% 
@@ -38,7 +39,7 @@ bt_workflow <- workflow() %>%
   add_recipe(recipe5)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()

@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidymodels)
 library(tictoc)
 library(kknn)
+library(doParallel)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -27,7 +28,7 @@ kn_model <- nearest_neighbor(
 kn_param <- extract_parameter_set_dials(kn_model)
 
 # define tuning grid ----
-kn_grid <- grid_regular(kn_param, levels = 5)
+kn_grid <- grid_regular(kn_param, levels = 10)
 
 # workflow ----
 kn_workflow <- workflow() %>% 
@@ -35,7 +36,7 @@ kn_workflow <- workflow() %>%
   add_recipe(recipe5)
 
 # Tuning/fitting ----
-cl <- makePSOCKcluster(4)
+cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
 
 tic.clearlog()
