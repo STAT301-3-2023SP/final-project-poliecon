@@ -79,11 +79,11 @@ recipe5 %>%
   prep(q_training) %>% 
   bake(new_data = NULL)
 
+save(recipe4, recipe5, file = "data/recipes.rda")
+
 # We have two recipes at hand. The basic one has four steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. This basic recipe also removes variables with over 20% missing values and uses knn for imputation through 'step_rm' and 'step_impute_knn'.
 
 # The second recipe goes beyond the basic by adding two more steps: 'step_other' is used to collapse infrequent factor levels into a single "other" level; 'step_nzv'is used to identify and remove predictors that have near-zero variance.
-
-
 
 
 # We have four recipes at hand. The basic one has four steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. 

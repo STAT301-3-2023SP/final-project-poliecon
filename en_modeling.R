@@ -14,15 +14,7 @@ set.seed(30123)
 
 # load required objects ----
 load("data/splits.rda")
-
-recipe4 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_knn(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
+load("data/recipes.rda")
 
 # Define model ----
 en_model <- logistic_reg(
@@ -44,7 +36,8 @@ en_workflow <- workflow() %>%
   add_recipe(recipe4)
 
 # Tuning/fitting ----
-doParallel::registerDoParallel(cores = 4)
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
 
 tic.clearlog()
 tic("Elastic Net")
@@ -70,4 +63,4 @@ en_tictoc <- tibble(model = log_time[[1]],
 doParallel::stopImplicitCluster()
 
 # Save
-save(en_tuned, en_tictoc, file = "model_info/elastic_net.rda")
+save(en_tuned, en_tictoc, file = "results/elastic_net.rda")

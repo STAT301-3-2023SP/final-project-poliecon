@@ -1,0 +1,67 @@
+# multivariate adaptive regression splines tuning ----
+
+# Load package(s) ----
+library(tidyverse)
+library(tidymodels)
+library(tictoc)
+library(earth)
+
+# handle common conflicts
+tidymodels_prefer()
+
+# Seed
+set.seed(30123)
+
+# load required objects ----
+load("data/splits.rda")
+load("data/recipes.rda")
+
+# Define model ----
+mars_model <- mars(
+  num_terms = tune(),
+  prod_degree = tune(),
+  mode = "classification"
+) %>% 
+  set_engine("earth")
+
+# set-up tuning grid ----
+mars_param <- extract_parameter_set_dials(mars_model) %>% 
+  update(num_terms = num_terms(c(1, 22)))
+
+# define tuning grid ----
+mars_grid <- grid_regular(mars_param, levels = 5)
+
+# workflow ----
+mars_workflow <- workflow() %>% 
+  add_model(mars_model) %>% 
+  add_recipe(recipe4)
+
+# Tuning/fitting ----
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+
+tic.clearlog()
+tic("MARS")
+
+mars_tuned <- tune_grid(mars_workflow,
+                        resamples = q_folds,
+                        grid = mars_grid,
+                        control = control_grid(save_pred = TRUE,
+                                               save_workflow = TRUE,
+                                               parallel_over = "everything")
+)
+
+
+# Pace tuning code in hear
+toc(log = TRUE)
+
+# save runtime info
+log_time <- tic.log(format = FALSE)
+
+mars_tictoc <- tibble(model = log_time[[1]],
+                      runtime = log_time[[1]]$toc - log_time[[1]]$tic)
+
+doParallel::stopImplicitCluster()
+
+# Save
+save(mars_tuned, mars_tictoc, file = "results/mars.rda")

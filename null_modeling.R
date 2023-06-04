@@ -14,17 +14,7 @@ set.seed(30123)
 
 # load required objects ----
 load("data/splits.rda")
-
-recipe4 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_knn(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
-
-prep
+load("data/recipes.rda")
 
 # Define model ----
 null_model <- null_model(mode = "classification") %>% 

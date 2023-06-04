@@ -14,17 +14,7 @@ set.seed(30123)
 
 # load required objects ----
 load("data/splits.rda")
-
-recipe5 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_bag(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
-
-prep
+load("data/recipes.rda")
 
 # Define model ----
 null_model <- null_model(mode = "classification") %>% 
@@ -40,9 +30,9 @@ cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 
 tic.clearlog()
-tic("Null Model")
+tic("Null Model Recipe 2")
 
-null_tuned <- fit_resamples(null_workflow,
+null_tuned_2 <- fit_resamples(null_workflow,
                            q_folds,
                            metrics = metric_set(roc_auc),
                            control = control_grid(save_pred = TRUE,
@@ -55,10 +45,10 @@ toc(log = TRUE)
 # save runtime info
 log_time <- tic.log(format = FALSE)
 
-null_tictoc <- tibble(model = log_time[[1]],
+null_tictoc_2 <- tibble(model = log_time[[1]],
                     runtime = log_time[[1]]$toc - log_time[[1]]$tic)
 
 doParallel::stopImplicitCluster()
 
 # Save
-save(null_tuned, null_tictoc, file = "results/null.rda")
+save(null_tuned_2, null_tictoc_2, file = "results/null_2.rda")

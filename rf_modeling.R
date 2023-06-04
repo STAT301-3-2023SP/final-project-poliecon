@@ -15,15 +15,7 @@ set.seed(30123)
 
 # load required objects ----
 load("data/splits.rda")
-
-recipe4 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_knn(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
+load("data/recipes.rda")
 
 # Define model ----
 rf_model <- rand_forest(
@@ -36,10 +28,7 @@ rf_model <- rand_forest(
 
 # set-up tuning grid ----
 rf_params <- hardhat::extract_parameter_set_dials(rf_model) %>% 
-  update(
-    min_n = min_n(range = c(10,50)),
-    mtry = mtry(range = c(1,10))
-  )
+  update(mtry = mtry(range = c(1,22)))
 
 # define tuning grid ----
 rf_grid <- grid_regular(rf_params, levels = 5)
