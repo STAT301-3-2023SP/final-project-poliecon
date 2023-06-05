@@ -136,7 +136,7 @@ time_tib
 
 model_set <- 
   as_workflow_set(
-    "mars recipe 2" = mars_tuned_2
+    "mars recipe 2" = mars_tuned_2,
     "mars" = mars_tuned,
     "single layer neural network recipe 2" = nn_tuned_2,
     "single layer neural network" = nn_tuned,
@@ -173,6 +173,8 @@ ranked_mods <- gt(best_models) %>%
   )
 
 ranked_mods
+
+save(time_tib, ranked_mods, file = "plots/final_tables.rda")
 ```
 
 ### Relevant Challenges
