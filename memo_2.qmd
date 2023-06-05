@@ -55,16 +55,80 @@ library(tidyverse)
 library(tidymodels)
 library(gt)
 
-load("results/rf.rda")
 load("results/null.rda")
+load("results/null_2.rda")
+load("results/boosted_tree_2.rda")
+load("results/boosted_tree.rda")
+load("results/elastic_net_2.rda")
+load("results/elastic_net.rda")
+load("results/knn_2.rda")
+load("results/knn.rda")
+load("results/mars_2.rda")
+load("results/mars.rda")
+load("results/rf_2.rda")
+load("results/rf.rda")
+load("results/slnn_mlp_2.rda")
+load("results/slnn_mlp.rda")
+load("results/svm_poly_2.rda")
+load("results/svm_poly.rda")
+load("results/svm_radial.rda")
+load("results/svm_radial_2.rda")
+
+mars_2_time <- mars_tictoc_2 %>% 
+  filter(model == "MARS Recipe 2")
+
+mars_time <- mars_tictoc %>% 
+  filter(model == "MARS")
+
+nn_2_time <- nn_tictoc_2 %>% 
+  filter(model == "Single Layer Neural Network Recipe 2")
+
+nn_time <- nn_tictoc %>% 
+  filter(model == "Single Layer Neural Network")
+
+svm_poly_2_time <- svm_poly_tictoc_2 %>% 
+  filter(model == "SVM Polynomial Recipe 2")
+
+svm_poly_time <- svm_poly_tictoc %>% 
+  filter(model == "SVM Polynomial")
+
+svm_rad_2_time <- svm_radial_tictoc_2 %>% 
+  filter(model == "SVM Radial Recipe 2")
+
+svm_rad_time <- svm_radial_tictoc %>% 
+  filter(model == "SVM Radial")
+
+bt_2_time <- bt_tictoc_2 %>% 
+  filter(model == "Boosted Tree Recipe 2")
+
+bt_time <- bt_tictoc %>% 
+  filter(model == "Boosted Tree")
+
+knn_2_time <- kn_tictoc_2 %>% 
+  filter(model == "K-Nearest Neighbor Recipe 2")
+
+knn_time <- kn_tictoc %>% 
+  filter(model == "K-Nearest Neighbor")
+
+en_2_time <- en_tictoc_2 %>% 
+  filter(model == "Elastic Net Recipe 2")
+
+en_time <- en_tictoc %>% 
+  filter(model == "Elastic Net")
+
+rf_2_time <- rf_tictoc_2 %>% 
+  filter(model == "Random Forest Recipe 2")
 
 rf_time <- rf_tictoc %>% 
   filter(model == "Random Forest")
 
+null_2_time <- null_tictoc_2 %>% 
+  filter(model == "Null Model Recipe 2")
+
 null_time <- null_tictoc %>% 
   filter(model == "Null Model")
 
-time_tib <- purrr::reduce(list(rf_time, null_time), dplyr::full_join) %>% 
+time_tib <- purrr::reduce(list(null_time, null_2_time, rf_time, rf_2_time, en_time, en_2_time, bt_time, bt_2_time, knn_time, knn_2_time, svm_rad_time, svm_rad_2_time, svm_poly_time, svm_poly_2_time, nn_time, nn_2_time, mars_time, mars_2_time), dplyr::full_join) %>% 
   gt() %>% 
   tab_header(title = md("**Model Runtime**"))
 
@@ -72,7 +136,23 @@ time_tib
 
 model_set <- 
   as_workflow_set(
+    "mars recipe 2" = mars_tuned_2
+    "mars" = mars_tuned,
+    "single layer neural network recipe 2" = nn_tuned_2,
+    "single layer neural network" = nn_tuned,
+    "svm poly recipe 2" = svm_poly_tuned_2,
+    "svm poly" = svm_poly_tuned,
+    "svm rad recipe 2" = svm_radial_tuned_2,
+    "svm rad" = svm_radial_tuned,
+    "bt recipe 2" = bt_tuned_2,
+    "bt" = bt_tuned,
+    "knn recipe 2" = kn_tuned_2,
+    "knn" = kn_tuned,
+    "elastic net recipe 2" = en_tuned_2,
+    "elastic net" = en_tuned,
+    "rf recipe 2" = rf_tuned_2,
     "rf" = rf_tuned,
+    "null recipe 2" = null_tuned_2,
     "null" = null_tuned
   )
 
