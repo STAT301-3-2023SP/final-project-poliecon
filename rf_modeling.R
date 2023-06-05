@@ -68,3 +68,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(rf_tuned, rf_tictoc, file = "results/rf.rda")
+
+load("results/rf.rda")
+
+autoplot(rf_tuned)

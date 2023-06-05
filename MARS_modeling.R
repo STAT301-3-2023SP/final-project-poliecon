@@ -66,3 +66,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(mars_tuned, mars_tictoc, file = "results/mars.rda")
+
+load("results/mars.rda")
+
+autoplot(mars_tuned)

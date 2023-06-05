@@ -66,3 +66,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(svm_poly_tuned, svm_poly_tictoc, file = "results/svm_poly.rda")
+
+load("results/svm_poly.rda")
+
+autoplot(svm_poly_tuned)

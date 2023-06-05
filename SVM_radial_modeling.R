@@ -65,3 +65,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(svm_radial_tuned, svm_radial_tictoc, file = "results/svm_radial.rda")
+
+load("results/svm_radial.rda")
+
+autoplot(svm_radial_tuned)

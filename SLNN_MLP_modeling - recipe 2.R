@@ -65,3 +65,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(nn_tuned_2, nn_tictoc_2, file = "results/slnn_mlp_2.rda")
+
+load("results/slnn_mlp_2.rda")
+
+autoplot(nn_tuned_2)

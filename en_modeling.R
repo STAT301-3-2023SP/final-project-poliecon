@@ -65,3 +65,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(en_tuned, en_tictoc, file = "results/elastic_net.rda")
+
+load("results/elastic_net.rda")
+
+autoplot(en_tuned)

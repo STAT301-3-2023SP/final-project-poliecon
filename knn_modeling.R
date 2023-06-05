@@ -64,3 +64,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(kn_tuned, kn_tictoc, file = "results/knn.rda")
+
+load("results/knn.rda")
+
+autoplot(kn_tuned)

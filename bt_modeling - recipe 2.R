@@ -67,3 +67,7 @@ doParallel::stopImplicitCluster()
 
 # Save
 save(bt_tuned_2, bt_tictoc_2, file = "results/boosted_tree_2.rda")
+
+load("results/boosted_tree_2.rda")
+
+autoplot(bt_tuned_2)
