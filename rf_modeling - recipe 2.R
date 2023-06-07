@@ -38,7 +38,6 @@ rf_workflow <- workflow() %>%
   add_model(rf_model) %>% 
   add_recipe(recipe5)
 
-
 # Create a cluster object and then register: 
 cl <- makePSOCKcluster(8)
 registerDoParallel(cl)
