@@ -132,8 +132,6 @@ time_tib <- purrr::reduce(list(null_time, null_2_time, rf_time, rf_2_time, en_ti
   # gt() %>% 
   # tab_header(title = md("**Model Runtime**"))
 
-time_tib
-
 model_set <- 
   as_workflow_set(
     "mars recipe 2" = mars_tuned_2,
@@ -172,11 +170,7 @@ best_models <- as_tibble(
 #     subtitle = "Metric = ROC-AUC"
 #   )
 
-ranked_mods
-
-save(time_tib, best_models, file = "plots/final_tables.rda")
-
-load("plots/final_tables.rda")
+save(time_tib, best_models, file = "final_results/final_tables.rda")
 
 save(model_set, file = "results/model_set.rda")
 ```
