@@ -1,0 +1,224 @@
+---
+title: "Final Report"
+subtitle: "Data Science 3 with R (STAT 301-3)"
+author: "Qin Huang & Parth Patel (Poliecon)"
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+    
+execute:
+  warning: false
+
+from: markdown+emoji  
+---
+
+
+## Github Repo Link
+
+::: {.callout-important}
+
+To link to your github **repo**sitory, appropriately edit the example link below. Meaning replace `https://your-github-repo-url` with your github repo url. Suggest verifying the link works before submitting.
+
+[https://github.com/STAT301-3-2023SP/final-project-poliecon.git](https://github.com/STAT301-3-2023SP/final-project-poliecon.git)
+
+:::
+
+
+## Introduction
+
+In this final project, our objective is to use eight independent variables to predict the voting participation of American youths. Young adults (ages 18-24) have consistently voted at significantly lower rates than other age groups in the U.S. (Kam and Palmer 2008). Consequently, understanding why some youths vote while others do not, and predicting youth voting behavior based on their demographics, socioeconomic backgrounds, education, and socialization, is of great importance.
+
+In this report, we will first introduce the dataset we are using, followed by an exploratory descriptive analysis of this data. Subsequently, I will discuss the models we have used to predict youth voting. Building on our models, I will compare the results across them, select the most effective model, and draw conclusions based on the final selected model.
+
+
+## Dataset
+
+The dataset we are using is a publicly available one entitled "The Commission on Youth Voting and Civic Knowledge Youth Post-Election Survey 2012" (Levin 2016). This study is conducted by the Center for Information and Research on Civic Learning and Engagement (CIRCLE) surveying 4,483 individuals aged 18 to 24. The study aimed to gather information about their political engagement and educational experiences. The interviews commenced the day after the 2012 presidential election and continued for six weeks afterward. The survey covered various aspects such as voter turnout, participation in elections, informed voting, voter registration, voting behavior, political and campaign knowledge, and the alignment of voting choices with personal opinions on campaign issues. In addition to these topics, the study also explored the respondents' background experiences, their exposure to civic education in schools, families, and community settings, their current involvement with civic groups, the political climate of their state, and the implementation of education and voting laws in their state. Demographic data collected for each participant included age, race, gender, education level, employment status, and religion.
+
+
+## EDA
+
+We partitioned the dataset into an 80 percent training set and a 20 percent testing set. We initially explored the response variable (whether youths voted or not) in the training set. As depicted in the corresponding table and figure, this categorical variable is fairly balanced, with approximately 40 percent not voting and 60 percent voting. Consequently, no additional transformations are necessary for this variable.
+
+```{r. echo=FALSE}
+library(knitr)
+include_graphics("plots/1.png")
+include_graphics("plots/2.png")
+```
+
+Next, I assessed the presence of missing data in our dataset. Fortunately, there are no missing values in the response variable, largely because the focus of the survey was on voting, ensuring that this particular information was captured by the interviewers. As for the predictors, the issue of missing data is relatively minor. Over half of these variables have less than 5 percent missing values, with the highest proportion being 8 percent. Consequently, we can confidently address the missing values in the predictors using imputation methods without significant impact on the integrity of our analysis.
+
+
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/3.png")
+include_graphics("plots/4.png")
+
+```
+
+
+## Methods Overview
+
+After trying different recipes, we realized that two recipes work very well with different imputation methods. The first one has six steps: 'step_string2factor' is used to convert character variables to factors; ' step_dummy' is used to convert factor variables into a series of binary (0 and 1) variables; ' step_center'is used to center variables, which means subtracting the mean of a variable from all its values;  'step_scale' is used to scale variables, which means dividing all the values of a variable by its standard deviation. This recipe also removes variables with over 20% missing values and uses knn for imputation through 'step_rm' and 'step_impute_knn'. We have a second recipe replace knn imputation with bag imputation. Therefore, we tested both of them on 8 different types of models: null modelling, boosted tree (bt), elastic net (en), k nearest neighbor (knn), Multivariate Adaptive Regression Splines (MARS), Single layer neural network (slnn), SVM poly, and SVM radial. In total, we have 16 models to compare based on the single metric of roc-auc. 
+
+
+
+## Model Building
+
+I use the `tidymodels` framework to tune and fit the following models. You can check respective r.files for my detailed codes for each models. I also present their results in this section. For null modeling, please see null_modeling.R abd null_modeling_recipe 2.R 
+    
+
+1.  elastic net
+
+    -   tune `mixture` and `penalty`
+    -   1_en_tuning.R
+    -   1_en_tuning_recipe 2.R    
+    
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/en_r1.png")
+include_graphics("plots/en_r2.png")
+```
+
+
+2.  Nearest neighbors
+
+    -   tune number of `neighbors`
+    -   1_knn_tuning.R
+    -   1_knn_tuning_recipe 2.R
+
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/knn_r1.png")
+include_graphics("plots/knn_r2.png")
+```
+
+
+3.  Random forest
+
+    -   tune `mtry` and `min_n`
+    -   1_rf_tuning.R
+    -   1_rf_tuning - recipe 2.R
+    
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/rf_r1.png")
+include_graphics("plots/rf_r2.png")
+```
+
+4.  Boosted tree
+
+    -   tune `mtry`, `min_n`, and `learn_rate`
+    -   1_bt_tuning.R
+    -   1_bt_tuning - recipe 2.R
+  
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/bt_r1.png")
+include_graphics("plots/bt_r2.png")
+```
+
+5.  Support vector machine (polynomial)
+
+    -   tune `cost`, `degree`, and `scale_factor` (default values are sufficient, free to change if you want)
+    -   1_SVM_poly_tuning.R
+    -   1_SVM_poly_tuning - recipe 2.R
+    
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/svm_poly_r1.png")
+include_graphics("plots/svm_poly_r2.png")
+```
+
+6.  Support vector machine (radial basis function)
+
+    -   tune `cost` and `rbf_sigma` (default values)
+    -   1_SVM_radial_tuning.R
+    -   1_SVM_radial_tuning - recipe 2.R
+
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/svm_radial_r1.png")
+include_graphics("plots/svm_radial_r2.png")
+```
+
+7.  Single Layer Neural Network (multilayer perceptron --- mlp)
+
+    -   tune `hidden_units` and `penalty` (default values)
+    -   1_SLNN_MLP_tuning.R
+    -   1_SLNN_MLP_tuning - recipe 2.R    
+
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/slnn_mlp_r1.png")
+include_graphics("plots/slnn_mlp_r2.png")
+```
+    
+8. Multivariate adaptive regression splines (MARS)
+
+    -   tune `num_terms` (need to supply upperbound) and `prod_degree` (defualt works here)
+    -   1_MARS_tuning.R
+    -   1_MARS_tuning - recipe 2.R
+
+```{r, echo=FALSE}
+library(knitr)
+include_graphics("plots/mars_r1.png")
+include_graphics("plots/mars_r2.png")
+```
+
+## Model Comparison 
+
+In total, we applied 16 different models to the complete training data set. The best-performing model turned out to be Elastic Net Recipe 2. This model yielded the highest ROC-AUC (Receiver Operating Characteristic - Area Under Curve) score of 0.7354077 when predicting the response variable on the training data. Additionally, we have provided the runtimes for all 16 models. Our winning model took 69 seconds, which, while not the fastest, was reasonable considering its performance.
+
+```{r, echo=FALSE}
+library(gt)
+
+load("final_results/final_tables.rda")
+
+ ranked_mods <- gt(best_models) %>% 
+   cols_label(wflow_id = html("Model Type"),
+              mean = html("Mean"),
+              rank = html("Rank")
+   ) %>% 
+   tab_header(
+     title = md("**Top Ranked Models**"),
+     subtitle = "Metric = ROC-AUC"
+   )
+ 
+ ranked_mods
+
+ include_graphics("final_results/time_tib.png")
+ 
+ load("final_results/final_predict.rda")
+```
+
+
+Therefore, we fit this winning model into our testing set. It yields an roc-auc of ????????
+
+
+## Conclusion
+
+This project suggests that the elastic net model can accurately predict youth voting using 4000 cases, which holds significant theoretical and practical implications.
+
+From a theoretical perspective, future studies can be undertaken to identify which features are most crucial in making these predictions. This will enhance our understanding of the motivations and constraints faced by American youths when they participate in politics.
+
+Meanwhile, future research in this field has substantial policy implications. As youth voting should be encouraged, our research will help predict in advance of elections whether particular youths are likely to vote or not. This, in turn, can guide targeted efforts to encourage those who are predicted not to vote, fostering greater political engagement among the youth.
+
+In conclusion, our project not only contributes to a better understanding of the patterns and determinants of youth voting behavior but also provides insights that can be used to promote civic participation among this important demographic.
+
+
+
+## References
+
+Kam, Cindy D. and Carl L. Palmer. 2008. Reconsidering the Effects of Education on Political Participation. The Journal of Politics. 70: 612-631.
+
+Levine, Peter. The Commission on Youth Voting and Civic Knowledge Youth Post-Election Survey 2012. Inter-university Consortium for Political and Social Research [distributor], 2016-03-24. https://doi.org/10.3886/ICPSR35012.v2
+
+
+## Github Repo Link
+
+[https://github.com/STAT301-3-2023SP/final-project-poliecon.git](https://github.com/STAT301-3-2023SP/final-project-poliecon.git)
