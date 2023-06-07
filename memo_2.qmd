@@ -49,7 +49,7 @@ For this memo, the one recipe was used with a random forest model and a null mod
 The results can be found below.
 
 ```{r}
-#| warning: false
+ #| warning: false
 
 library(tidyverse)
 library(tidymodels)
@@ -128,9 +128,9 @@ null_2_time <- null_tictoc_2 %>%
 null_time <- null_tictoc %>% 
   filter(model == "Null Model")
 
-time_tib <- purrr::reduce(list(null_time, null_2_time, rf_time, rf_2_time, en_time, en_2_time, bt_time, bt_2_time, knn_time, knn_2_time, svm_rad_time, svm_rad_2_time, svm_poly_time, svm_poly_2_time, nn_time, nn_2_time, mars_time, mars_2_time), dplyr::full_join) %>% 
-  gt() %>% 
-  tab_header(title = md("**Model Runtime**"))
+time_tib <- purrr::reduce(list(null_time, null_2_time, rf_time, rf_2_time, en_time, en_2_time, bt_time, bt_2_time, knn_time, knn_2_time, svm_rad_time, svm_rad_2_time, svm_poly_time, svm_poly_2_time, nn_time, nn_2_time, mars_time, mars_2_time), dplyr::full_join) 
+  # gt() %>% 
+  # tab_header(title = md("**Model Runtime**"))
 
 time_tib
 
@@ -162,19 +162,22 @@ best_models <- as_tibble(
   select(wflow_id, mean, rank)
 )
 
-ranked_mods <- gt(best_models) %>% 
-  cols_label(wflow_id = html("Model Type"),
-             mean = html("Mean"),
-             rank = html("Rank")
-  ) %>% 
-  tab_header(
-    title = md("**Top Ranked Models**"),
-    subtitle = "Metric = ROC-AUC"
-  )
+# ranked_mods <- gt(best_models) %>% 
+#   cols_label(wflow_id = html("Model Type"),
+#              mean = html("Mean"),
+#              rank = html("Rank")
+#   ) %>% 
+#   tab_header(
+#     title = md("**Top Ranked Models**"),
+#     subtitle = "Metric = ROC-AUC"
+#   )
 
 ranked_mods
 
-save(time_tib, ranked_mods, file = "plots/final_tables.rda")
+save(time_tib, best_models, file = "plots/final_tables.rda")
+
+load("plots/final_tables.rda")
+
 save(model_set, file = "results/model_set.rda")
 ```
 
