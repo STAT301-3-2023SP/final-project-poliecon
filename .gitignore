@@ -31,3 +31,4 @@ results/boosted_tree_2.rda
 results/rf.rda
 results/model_set.rda
 results/rf_2.rda
+plots/rf_r2.png
