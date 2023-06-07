@@ -29,7 +29,7 @@ en_model <- logistic_reg(
 en_param <- extract_parameter_set_dials(en_model)
 
 # define tuning grid ----
-en_grid <- grid_regular(en_param, levels = 10)
+en_grid <- grid_regular(en_param, levels = 8)
 
 # workflow ----
 en_workflow <- workflow() %>% 
@@ -68,4 +68,6 @@ save(en_tuned, en_tictoc, file = "results/elastic_net.rda")
 
 load("results/elastic_net.rda")
 
-autoplot(en_tuned)
+plot <- autoplot(en_tuned)
+
+save(plot, file = "plots/en_r1.png")

@@ -175,6 +175,7 @@ ranked_mods <- gt(best_models) %>%
 ranked_mods
 
 save(time_tib, ranked_mods, file = "plots/final_tables.rda")
+save(model_set, file = "results/model_set.rda")
 ```
 
 ### Relevant Challenges

@@ -30,7 +30,7 @@ mars_param <- extract_parameter_set_dials(mars_model) %>%
   update(num_terms = num_terms(c(1, 22)))
 
 # define tuning grid ----
-mars_grid <- grid_regular(mars_param, levels = 10)
+mars_grid <- grid_regular(mars_param, levels = 8)
 
 # workflow ----
 mars_workflow <- workflow() %>% 
@@ -69,4 +69,6 @@ save(mars_tuned_2, mars_tictoc_2, file = "results/mars_2.rda")
 
 load("results/mars_2.rda")
 
-autoplot(mars_tuned_2)
+plot <- autoplot(mars_tuned_2)
+
+save(plot, file = "plots/mars_r2.png")

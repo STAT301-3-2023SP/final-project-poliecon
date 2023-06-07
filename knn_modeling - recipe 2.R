@@ -28,7 +28,7 @@ kn_model <- nearest_neighbor(
 kn_param <- extract_parameter_set_dials(kn_model)
 
 # define tuning grid ----
-kn_grid <- grid_regular(kn_param, levels = 10)
+kn_grid <- grid_regular(kn_param, levels = 8)
 
 # workflow ----
 kn_workflow <- workflow() %>% 
@@ -67,4 +67,6 @@ save(kn_tuned_2, kn_tictoc_2, file = "results/knn_2.rda")
 
 load("results/knn_2.rda")
 
-autoplot(kn_tuned_2)
+plot <- autoplot(kn_tuned_2)
+
+save(plot, file = "plots/knn_r2.png")

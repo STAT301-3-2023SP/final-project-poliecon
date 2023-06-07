@@ -29,7 +29,7 @@ svm_radial_model <- svm_rbf(
 svm_radial_param <- extract_parameter_set_dials(svm_radial_model)
 
 # define tuning grid ----
-svm_radial_grid <- grid_regular(svm_radial_param, levels = 10)
+svm_radial_grid <- grid_regular(svm_radial_param, levels = 8)
 
 # workflow ----
 svm_radial_workflow <- workflow() %>% 
@@ -68,4 +68,6 @@ save(svm_radial_tuned_2, svm_radial_tictoc_2, file = "results/svm_radial_2.rda")
 
 load("results/svm_radial_2.rda")
 
-autoplot(svm_radial_tuned_2)
+plot <- autoplot(svm_radial_tuned_2)
+
+save(plot, file = "plots/svm_radial_r2.png")

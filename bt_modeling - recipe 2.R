@@ -31,7 +31,7 @@ bt_param <- extract_parameter_set_dials(bt_model) %>%
   update(mtry = mtry(c(1, 22)))
 
 # define tuning grid ----
-bt_grid <- grid_regular(bt_param, levels = 10)
+bt_grid <- grid_regular(bt_param, levels = 8)
 
 # workflow ----
 bt_workflow <- workflow() %>% 
@@ -70,4 +70,6 @@ save(bt_tuned_2, bt_tictoc_2, file = "results/boosted_tree_2.rda")
 
 load("results/boosted_tree_2.rda")
 
-autoplot(bt_tuned_2)
+plot <- autoplot(bt_tuned_2)
+
+save(plot, file = "plots/bt_r2.png")

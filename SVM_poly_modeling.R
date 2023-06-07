@@ -30,7 +30,7 @@ svm_poly_model <- svm_poly(
 svm_poly_param <- extract_parameter_set_dials(svm_poly_model)
 
 # define tuning grid ----
-svm_poly_grid <- grid_regular(svm_poly_param, levels = 10)
+svm_poly_grid <- grid_regular(svm_poly_param, levels = 8)
 
 # workflow ----
 svm_poly_workflow <- workflow() %>% 
@@ -69,4 +69,6 @@ save(svm_poly_tuned, svm_poly_tictoc, file = "results/svm_poly.rda")
 
 load("results/svm_poly.rda")
 
-autoplot(svm_poly_tuned)
+plot <- autoplot(svm_poly_tuned)
+
+save(plot, file = "plots/svm_poly_r1.png")

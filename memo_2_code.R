@@ -51,14 +51,13 @@ recipe3 %>%
   bake(new_data = NULL)
 
 ## recipe 4: advanced with imputation used in MEMO 2
-recipe4 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_knn(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
+
+recipe4 <- recipe(QI1 ~ ., data = q_training) %>% 
+  step_impute_knn(all_predictors()) %>% 
+  step_other(all_nominal_predictors(), threshold = 0.05) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_normalize(all_predictors())
 
 recipe4 %>%
   prep(q_training) %>% 
@@ -66,14 +65,12 @@ recipe4 %>%
 
 
 ## recipe 5: advanced with imputation used in MEMO 2
-recipe5 = recipe(QI1 ~ ., data = q_training) %>%
-  step_impute_bag(all_predictors())  %>%
-  step_string2factor(all_nominal()) %>%
-  step_other(all_nominal(), -all_outcomes(), threshold = 0.05) %>%
-  step_dummy(all_nominal(), -all_outcomes()) %>%
-  step_nzv(all_predictors()) %>%
-  step_center(all_predictors(), -all_nominal()) %>%
-  step_scale(all_predictors(), -all_nominal())
+recipe5 <- recipe(QI1 ~ ., data = q_training) %>% 
+  step_impute_bag(all_predictors()) %>% 
+  step_other(all_nominal_predictors(), threshold = 0.05) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_nzv(all_predictors()) %>% 
+  step_normalize(all_predictors())
 
 recipe5 %>%
   prep(q_training) %>% 

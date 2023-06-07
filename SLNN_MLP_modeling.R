@@ -29,7 +29,7 @@ nn_model <- mlp(
 nn_param <- extract_parameter_set_dials(nn_model)
 
 # define tuning grid ----
-nn_grid <- grid_regular(nn_param, levels = 10)
+nn_grid <- grid_regular(nn_param, levels = 8)
 
 # workflow ----
 nn_workflow <- workflow() %>% 
@@ -68,4 +68,6 @@ save(nn_tuned, nn_tictoc, file = "results/slnn_mlp.rda")
 
 load("results/slnn_mlp.rda")
 
-autoplot(nn_tuned)
+plot <- autoplot(nn_tuned)
+
+save(plot, file = "plots/slnn_mlp_r1.png")

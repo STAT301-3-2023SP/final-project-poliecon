@@ -3,6 +3,7 @@
 library(tidyverse)
 library(tidymodels)
 library(naniar)
+library(dataMaid)
 
 load("data/raw/35012-0001-Data.rda")
 
@@ -45,6 +46,7 @@ vars_to_remove <- names(missing_prop[missing_prop > 0.2])
 data2 <- data1 %>%
   select(-all_of(vars_to_remove), -QVI6, -QX2, -QX11, -QX7)
 
+makeDataReport(data2)
 
 t1 <- miss_var_summary(data2)
 

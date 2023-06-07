@@ -31,7 +31,7 @@ rf_params <- hardhat::extract_parameter_set_dials(rf_model) %>%
   update(mtry = mtry(range = c(1,22)))
 
 # define tuning grid ----
-rf_grid <- grid_regular(rf_params, levels = 10)
+rf_grid <- grid_regular(rf_params, levels = 8)
 
 # workflow ----
 rf_workflow <- workflow() %>% 
@@ -71,4 +71,6 @@ save(rf_tuned, rf_tictoc, file = "results/rf.rda")
 
 load("results/rf.rda")
 
-autoplot(rf_tuned)
+plot <- autoplot(rf_tuned)
+
+save(plot, file = "plots/rf_r1.png")
