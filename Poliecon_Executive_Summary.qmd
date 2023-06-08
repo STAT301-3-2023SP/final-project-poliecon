@@ -16,6 +16,13 @@ execute:
 from: markdown+emoji  
 ---
 
+## Github Repo Link
+
+::: {.callout-important}
+
+[https://github.com/STAT301-3-2023SP/final-project-poliecon.git](https://github.com/STAT301-3-2023SP/final-project-poliecon.git)
+
+:::
 
 
 ## Introduction
