@@ -67,6 +67,4 @@ save(kn_tuned, kn_tictoc, file = "results/knn.rda")
 
 load("results/knn.rda")
 
-plot <- autoplot(kn_tuned)
-
-save(plot, file = "plots/knn_r1.png")
+autoplot(kn_tuned)

@@ -68,6 +68,4 @@ save(svm_radial_tuned, svm_radial_tictoc, file = "results/svm_radial.rda")
 
 load("results/svm_radial.rda")
 
-plot <- autoplot(svm_radial_tuned)
-
-save(plot, file = "plots/svm_radial_r1.png")
+autoplot(svm_radial_tuned)

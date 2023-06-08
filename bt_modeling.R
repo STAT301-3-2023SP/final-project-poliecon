@@ -70,6 +70,4 @@ save(bt_tuned, bt_tictoc, file = "results/boosted_tree.rda")
 
 load("results/boosted_tree.rda")
 
-plot <- autoplot(bt_tuned)
-
-save(plot, file = "plots/bt_r1.png")
+autoplot(bt_tuned)

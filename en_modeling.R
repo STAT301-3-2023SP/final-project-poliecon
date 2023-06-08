@@ -68,6 +68,4 @@ save(en_tuned, en_tictoc, file = "results/elastic_net.rda")
 
 load("results/elastic_net.rda")
 
-plot <- autoplot(en_tuned)
-
-save(plot, file = "plots/en_r1.png")
+autoplot(en_tuned)

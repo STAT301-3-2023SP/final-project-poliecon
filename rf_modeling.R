@@ -71,6 +71,4 @@ save(rf_tuned, rf_tictoc, file = "results/rf.rda")
 
 load("results/rf.rda")
 
-plot <- autoplot(rf_tuned)
-
-save(plot, file = "plots/rf_r1.png")
+autoplot(rf_tuned)

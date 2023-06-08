@@ -69,6 +69,4 @@ save(mars_tuned_2, mars_tictoc_2, file = "results/mars_2.rda")
 
 load("results/mars_2.rda")
 
-plot <- autoplot(mars_tuned_2)
-
-save(plot, file = "plots/mars_r2.png")
+autoplot(mars_tuned_2)

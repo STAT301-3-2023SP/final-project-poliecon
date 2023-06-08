@@ -68,6 +68,4 @@ save(nn_tuned, nn_tictoc, file = "results/slnn_mlp.rda")
 
 load("results/slnn_mlp.rda")
 
-plot <- autoplot(nn_tuned)
-
-save(plot, file = "plots/slnn_mlp_r1.png")
+autoplot(nn_tuned)

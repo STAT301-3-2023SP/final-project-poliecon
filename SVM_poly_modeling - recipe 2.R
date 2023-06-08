@@ -69,6 +69,4 @@ save(svm_poly_tuned_2, svm_poly_tictoc_2, file = "results/svm_poly_2.rda")
 
 load("results/svm_poly_2.rda")
 
-plot <- autoplot(svm_poly_tuned_2)
-
-save(plot, file = "plots/svm_poly_r2.png")
+autoplot(svm_poly_tuned_2)
