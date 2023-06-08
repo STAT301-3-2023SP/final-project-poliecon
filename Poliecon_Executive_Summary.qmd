@@ -54,7 +54,37 @@ load("final_results/final_tables.rda")
 ```
 
 
-Therefore, we fit this winning model into our testing set. It yields an roc-auc of ????????
+
+Therefore, we applied this top-performing model to our testing set. The table included summarizes all the metrics it produces. For instance, this model achieves an accuracy of 0.7. A confusion matrix is also provided to give a more detailed view of the model's performance.
+
+
+```{r, echo=FALSE}
+library(tidymodels)
+library(stringr)
+library(ggsci)
+
+load("final_results/final_predict.rda")
+
+confMtx <- conf_mat(data = final_pred, truth="QI1", estimate = ".pred_class") ## confusion matrix
+
+confMtx %>% 
+  tidy() %>%
+  mutate(Prediction = str_split(name, "_", simplify = T)[,2]) %>%
+  mutate(Truth = str_split(name, "_", simplify = T)[,3]) %>%
+  mutate(Prediction = plyr::mapvalues(Prediction, from = c("1", "2"), to = c("Yes", "No"))) %>%
+  mutate(Truth = plyr::mapvalues(Truth, from = c("1", "2"), to = c("Yes", "No"))) %>%
+  mutate(Prop = value/sum(value)) %>%
+  select(Prediction, Truth, value, Prop) %>%
+  ggplot(aes(x=Truth, y=Prediction, fill = Prop)) +
+  geom_tile(color = "white", linewidth = 1) +
+  geom_text(aes(label = round(Prop, 2))) +
+  theme_minimal() +
+  scale_fill_material(palette = "orange")
+
+
+
+
+```
 
 ## Conclusion
 
