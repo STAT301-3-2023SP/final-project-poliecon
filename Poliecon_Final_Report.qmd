@@ -69,7 +69,7 @@ After trying different recipes, we realized that two recipes work very well with
 
 ## Model Building
 
-I use the `tidymodels` framework to tune and fit the following models. You can check respective r.files for my detailed codes for each models. I also present their results in this section. For null modeling, please see null_modeling.R abd null_modeling_recipe 2.R 
+I use the `tidymodels` framework to tune and fit the following models. You can check respective r.files for my detailed codes for each models. I also present their results in this section (resampling with 5 fold and 3 repeats)). For null modeling, please see null_modeling.R abd null_modeling_recipe 2.R 
     
 
 1.  elastic net
