@@ -189,9 +189,11 @@ load("final_results/final_tables.rda")
  
  ranked_mods
 
- include_graphics("final_results/time_tib.png")
+time_tib %>% 
+  gt() %>% 
+  tab_header(title = md("**Model Runtime**"))
  
- load("final_results/final_predict.rda")
+load("final_results/final_predict.rda")
 ```
 
 
@@ -223,10 +225,6 @@ confMtx %>%
   geom_text(aes(label = round(Prop, 2))) +
   theme_minimal() +
   scale_fill_material(palette = "orange")
-
-
-
-
 ```
 
 ## Conclusion
